@@ -43,10 +43,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AI_States\Radar\DrvRadarLock.cs" />
-    <Compile Include="AI_States\Radar\DrvRadarSearch.cs" />
-    <Compile Include="AI_States\Wheels\DrvWheelsEngage.cs" />
-    <Compile Include="AI_States\Wheels\DrvWheelsIdle.cs" />
     <Compile Include="General\MapHelper.cs" />
     <Compile Include="General\MathHelpers.cs" />
     <Compile Include="General\Point2D.cs" />
