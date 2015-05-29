@@ -3,6 +3,7 @@ using System.Drawing;
 using PG4500_2015_Innlevering2.General;
 using Robocode;
 
+//TODO: BYTT NAMESPACE NAVN
 namespace PG4500_2015_Innlevering2.Robocode
 {
 	/// <summary>
@@ -59,8 +60,9 @@ namespace PG4500_2015_Innlevering2.Robocode
 			Waypoint destination = new Waypoint(this, target);
 			SetTurnRight(destination.Angle);
 			DrawLineAndTarget(Color.Red, new Point2D(X, Y), target);
-			//if(TurnCompleted())
-				SetAhead(destination.Distance);
+			
+			SetAhead(destination.Distance);
+			Console.WriteLine("Distance = " + destination.Distance);
 		}
 
 		public void Flee(Point2D target)

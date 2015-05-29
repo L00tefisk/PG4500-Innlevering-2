@@ -1,4 +1,5 @@
-﻿using PG4500_2015_Innlevering2.Robocode;
+﻿using System;
+using PG4500_2015_Innlevering2.Robocode;
 using Robocode.Util;
 
 namespace PG4500_2015_Innlevering2.AI_States.Radar
@@ -22,6 +23,7 @@ namespace PG4500_2015_Innlevering2.AI_States.Radar
 
 			Robot.SetTurnRadarRightRadians(Utils.NormalRelativeAngle(radarTurn));
 			// ...
+			Console.WriteLine("LOCK");
 			if (Robot.HasLock)
 				return "Lock";
 			else

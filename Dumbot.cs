@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Drawing;
 using PG4500_2015_Innlevering2.AI_States.Radar;
-using PG4500_2015_Innlevering2.AI_States.Turret;
 using PG4500_2015_Innlevering2.AI_States.Wheels;
 using PG4500_2015_Innlevering2.General;
 using PG4500_2015_Innlevering2.Robocode;
@@ -18,7 +17,6 @@ namespace PG4500_2015_Innlevering2
 		// -------------------------------------------
 
 		private readonly FiniteStateMachine _radarFSM;
-		private readonly FiniteStateMachine _turretFSM;
 		private readonly FiniteStateMachine _wheelsFSM;
 
 		private bool hasEnemyFired = false;
@@ -30,9 +28,8 @@ namespace PG4500_2015_Innlevering2
 		{
 			FireThreshold = 1000;
 			// Defining the possible states for this fsm. (Also, the 1st one listed becomes the default state.)
-			_radarFSM = new FiniteStateMachine(new State[] { new DrvRadarSearch(), new DrvRadarLock() });
-			_turretFSM = new FiniteStateMachine(new State[] { new DrvTurrentIdle(), new DrvTurretAim(), new DrvTurretFire() });
-			_wheelsFSM = new FiniteStateMachine(new State[] { new DrvWheelsIdle(), new DrvWheelsDodge(), new DrvWheelsEngage() });
+			_radarFSM = new FiniteStateMachine(new State[] {new DrvRadarSearch(), new DrvRadarLock()});
+			_wheelsFSM = new FiniteStateMachine(new State[] {new DrvWheelsIdle(), new DrvWheelsEngage()});
 		}
 
 
@@ -41,16 +38,16 @@ namespace PG4500_2015_Innlevering2
 			InitBot();
 
 			// Loop forever. (Exiting run means no more robot fun for us!)
-			while (true) {
+			while (true)
+			{
 
 				// The state machine doing its "magic".
 				if (hasEnemyFired && DistanceCompleted())
 					hasEnemyFired = false;
 				if (Enemy.PreviousEnergy - Enemy.Energy >= Rules.MIN_BULLET_POWER)
 					hasEnemyFired = true;
-					
+
 				_radarFSM.Update();
-				_turretFSM.Update();
 				_wheelsFSM.Update();
 
 
@@ -66,22 +63,21 @@ namespace PG4500_2015_Innlevering2
 
 		public override void OnScannedRobot(ScannedRobotEvent scanData)
 		{
-			HasLock = true;
 			// Storing data about scan time and Enemy for later use.
 			Vector2D offset = CalculateTargetVector(HeadingRadians, scanData.BearingRadians, scanData.Distance);
 			Point2D position = new Point2D(offset.X + X, offset.Y + Y);
 			Enemy.SetEnemyData(scanData, position);
 
 			// If we're out of energy, don't bother swapping states, as that will just make runtime bugs.
-			if (!Energy.IsCloseToZero()) {
-				if (hasEnemyFired && DistanceCompleted())
-					_wheelsFSM.Queue("Dodge");
-				else
-					_wheelsFSM.Queue("Engage");
-
-				_turretFSM.Queue("Aim");
+			if (!Energy.IsCloseToZero())
+			{
+				if (!HasLock)
+				{
+					
+				}
 				_radarFSM.Queue("Lock");
 			}
+			HasLock = true;
 		}
 
 
@@ -93,7 +89,7 @@ namespace PG4500_2015_Innlevering2
 		{
 			// Init the FSM.
 			_radarFSM.Init(this);
-			_turretFSM.Init(this);
+			//_turretFSM.Init(this);
 			_wheelsFSM.Init(this);
 
 			// Set some colors on our robot. (Body, gun, radar, bullet, and scan arc.)
@@ -102,13 +98,15 @@ namespace PG4500_2015_Innlevering2
 				Color.Black, //Gun
 				Color.OrangeRed, //Radar
 				Color.OrangeRed, //Bullet
-				Color.Red//Scan arc
-			);
+				Color.Red //Scan arc
+				);
 			// NOTE: Total distance each element can move remains the same, whether these ones are true or false. 
 			//       Example: Gun swivels a maximum of 20 degrees in addition to what the body swivels (if anything) 
 			//       each turn, no matter what IsAdjustGunForRobotTurn is set to.
 			IsAdjustGunForRobotTurn = true;
 			IsAdjustRadarForGunTurn = true;
+			_wheelsFSM.Queue("Engage");
+			_radarFSM.Queue("Search");
 		}
 
 
@@ -118,29 +116,9 @@ namespace PG4500_2015_Innlevering2
 		private Vector2D CalculateTargetVector(double ownHeadingRadians, double bearingToTargetRadians, double distance)
 		{
 			double battlefieldRelativeTargetAngleRadians = Utils.NormalRelativeAngle(ownHeadingRadians + bearingToTargetRadians);
-			Vector2D targetVector = new Vector2D(Math.Sin(battlefieldRelativeTargetAngleRadians) * distance,
-												 Math.Cos(battlefieldRelativeTargetAngleRadians) * distance);
+			Vector2D targetVector = new Vector2D(Math.Sin(battlefieldRelativeTargetAngleRadians)*distance,
+				Math.Cos(battlefieldRelativeTargetAngleRadians)*distance);
 			return targetVector;
-		}
-
-		//Code from http://robowiki.net/wiki/Wave_Suffering
-		public override void OnBulletHit(BulletHitEvent e)
-		{
-			base.OnBulletHit(e);
-			FireThreshold *= 1.2;
-			double bulletPower = e.Bullet.Power;
-			Enemy.PreviousEnergy -= Rules.GetBulletDamage(bulletPower);
-		}
-
-		public override void OnBulletMissed(BulletMissedEvent evnt)
-		{
-			base.OnBulletMissed(evnt);
-			if (FireThreshold >= 200)
-				FireThreshold *= 0.9;
-		}
-		public override void OnHitByBullet(HitByBulletEvent e)
-		{
-			Enemy.PreviousEnergy += Rules.GetBulletHitBonus(e.Bullet.Power);
 		}
 	}
 }

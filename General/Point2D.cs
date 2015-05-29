@@ -62,6 +62,11 @@ namespace PG4500_2015_Innlevering2.General
 			return (((X * X) + (Y * Y)).Equals(0.0));
 		}
 
+		public double Distance(Point2D point)
+		{
+			return Math.Sqrt(Math.Pow(point.X - X, 2) + Math.Pow(point.Y - Y, 2));
+		}
+
 		public bool Equals(Point2D point)
 		{
 			// If parameter is null return false:

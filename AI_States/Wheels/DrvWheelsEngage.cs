@@ -1,4 +1,5 @@
-﻿using PG4500_2015_Innlevering2.General;
+﻿using System.Runtime.CompilerServices;
+using PG4500_2015_Innlevering2.General;
 using PG4500_2015_Innlevering2.Robocode;
 
 namespace PG4500_2015_Innlevering2.AI_States.Wheels
@@ -25,25 +26,15 @@ namespace PG4500_2015_Innlevering2.AI_States.Wheels
 
 		public override string ProcessState()
 		{
-			// Add the points in a list
-			Waypoint[] waypoints = { new Waypoint(Robot, new Point2D(Robot.Enemy.Position.X + 150, Robot.Enemy.Position.Y + 150)),
-									 new Waypoint(Robot, new Point2D(Robot.Enemy.Position.X - 150, Robot.Enemy.Position.Y + 150)),
-									 new Waypoint(Robot, new Point2D(Robot.Enemy.Position.X + 150, Robot.Enemy.Position.Y - 150)),
-									 new Waypoint(Robot, new Point2D(Robot.Enemy.Position.X - 150, Robot.Enemy.Position.Y - 150)) };
-			// Keep track of the best waypoint
-			int waypointIndex = 0;
+			Point2D p = MapHelper.ConvertFromColMap(8, 8);
+			Robot.Seek(p);
 
-			for (int i = 1; i < 4; i++ )
-			{
-				Vector2D waypointToCenter = new Vector2D(waypoints[i].Destination.X - 400, waypoints[i].Destination.Y - 400);
-				Vector2D bestWaypointToCenter = new Vector2D(waypoints[waypointIndex].Destination.X - 400, waypoints[waypointIndex].Destination.Y - 400);
-				
-				if (waypointToCenter.Length() < bestWaypointToCenter.Length())
-					waypointIndex = i;
-			}
+			Point2D Rpos = new Point2D(Robot.X, Robot.Y);
 
-			Robot.Seek(waypoints[waypointIndex].Destination);
-			return "Idle";
+			if (Rpos.Distance(p).IsCloseToZero(0.0001))
+				return "Idle";
+			else
+				return "Engage";
 		}
 	}
 }

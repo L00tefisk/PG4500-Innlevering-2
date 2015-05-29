@@ -1,4 +1,5 @@
-﻿using PG4500_2015_Innlevering2.General;
+﻿using System;
+using PG4500_2015_Innlevering2.General;
 using PG4500_2015_Innlevering2.Robocode;
 
 namespace PG4500_2015_Innlevering2.AI_States.Wheels
@@ -14,8 +15,7 @@ namespace PG4500_2015_Innlevering2.AI_States.Wheels
 
 		public override string ProcessState()
 		{
-
-			return null;
+			return "Idle";
 		}
 	}
 }
