@@ -57,7 +57,7 @@ namespace PG4500_2015_Innlevering2.Robocode
 		public void Seek(Point2D target)
 		{
 
-			Waypoint destination = new Waypoint(this, target);
+			Node destination = new Node(this, target);
 			SetTurnRight(destination.Angle);
 			DrawLineAndTarget(Color.Red, new Point2D(X, Y), target);
 			
@@ -67,7 +67,7 @@ namespace PG4500_2015_Innlevering2.Robocode
 
 		public void Flee(Point2D target)
 		{
-			Waypoint destination = new Waypoint(this, target);
+			Node destination = new Node(this, target);
 			DrawLineAndTarget(Color.Red, new Point2D(X, Y), target);
 			SetTurnRight(destination.Angle);
 			if (TurnCompleted())

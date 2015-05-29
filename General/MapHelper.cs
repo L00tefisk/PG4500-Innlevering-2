@@ -30,6 +30,18 @@ namespace PG4500_2015_Innlevering2.General
 			new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 		};
 
+		static public List<Node> findPath(Point2D start, Point2D end)
+		{
+			// create open list
+			// create closed list
+			// create node from start add to open list
+			// create node from end
+
+			// while highest priority in open list isn't the end node
+				// Cost = g(current) + movementcost(current, neighbour)
+				// 
+		}
+
 		static public Point2D ConvertToColMap(int x, int y)
 		{
 			//ReSharper disable PossibleLossOfFraction , as we want to "Floor" the values anyway

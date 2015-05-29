@@ -3,7 +3,7 @@ using PG4500_2015_Innlevering2.Robocode;
 
 namespace PG4500_2015_Innlevering2.General
 {
-	class Waypoint
+	class Node
 	{
 		protected AdvancedRobotEx Robot;
 		public double Distance
@@ -23,7 +23,7 @@ namespace PG4500_2015_Innlevering2.General
 			}
 		}
 		public Point2D Destination { get; private set; }
-		public Waypoint(AdvancedRobotEx robot, Point2D point)
+		public Node(AdvancedRobotEx robot, Point2D point)
 		{
 			Destination = point;
 			Robot = robot;
