@@ -1,7 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
-using PG4500_2015_Innlevering2.AI_States.Radar;
-using PG4500_2015_Innlevering2.AI_States.Wheels;
 using PG4500_2015_Innlevering2.General;
 using PG4500_2015_Innlevering2.Robocode;
 using Robocode;
@@ -13,7 +12,8 @@ namespace PG4500_2015_Innlevering2
 	// ReSharper disable once InconsistentNaming
 	public class klemag_hyleiv_DumBot : AdvancedRobotEx
 	{
-
+        private List<Node> path;
+     
 		public klemag_hyleiv_DumBot()
 		{
 
@@ -23,13 +23,20 @@ namespace PG4500_2015_Innlevering2
 		public override void Run()
 		{
 			InitBot();
-
+            
 			// Loop forever. (Exiting run means no more robot fun for us!)
 			while (true)
 			{
 
 
-
+              // if(DistanceCompleted() && path.Count == 0) // we're at the end of the path
+              //    findPath(position, Enemy.Position);
+              // else if(DistanceCompleted()) // we're standing still, but there are more paths to go to
+              // {
+              //    Seek(path[0].position);
+              //    path.removeAt(0);
+              //  }
+              //  
 			}
 		}
 

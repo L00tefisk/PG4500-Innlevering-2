@@ -32,14 +32,30 @@ namespace PG4500_2015_Innlevering2.General
 
 		static public List<Node> findPath(Point2D start, Point2D end)
 		{
-			// create open list
-			// create closed list
-			// create node from start add to open list
-			// create node from end
 
-			// while highest priority in open list isn't the end node
-				// Cost = g(current) + movementcost(current, neighbour)
-				// 
+            PriorityQueue<Node> openList = new PriorityQueue<Node>();
+            List<Node> closedList = new List<Node>();
+
+            Node nodeStart = new Node(start);
+            Node goal = new Node(end);
+            openList.Enqueue(nodeStart, 0);
+            
+
+            while (openList.Count > 0)
+            {
+                Node current = openList.Dequeue();
+                if (current.Equals(goal))
+                    break;
+                
+                // For each neighbour of current
+                    // Calculate new cost
+                    // Check if the cost of the current one is less than the neigbours?
+                    
+            }
+
+
+
+            return closedList;
 		}
 
 		static public Point2D ConvertToColMap(int x, int y)

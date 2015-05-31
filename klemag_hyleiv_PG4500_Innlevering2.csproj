@@ -46,6 +46,7 @@
     <Compile Include="General\MapHelper.cs" />
     <Compile Include="General\MathHelpers.cs" />
     <Compile Include="General\Point2D.cs" />
+    <Compile Include="General\PriorityQueue.cs" />
     <Compile Include="General\Vector2D.cs" />
     <Compile Include="Dumbot.cs" />
     <Compile Include="General\Node.cs" />
