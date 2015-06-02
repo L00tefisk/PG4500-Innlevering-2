@@ -25,18 +25,20 @@ namespace PG4500_2015_Innlevering2
 			InitBot();
             
 			// Loop forever. (Exiting run means no more robot fun for us!)
+            Dictionary<Node, Node> path = new Dictionary<Node, Node>();
+            
 			while (true)
 			{
 
 
-              // if(DistanceCompleted() && path.Count == 0) // we're at the end of the path
-              //    findPath(position, Enemy.Position);
-              // else if(DistanceCompleted()) // we're standing still, but there are more paths to go to
-              // {
-              //    Seek(path[0].position);
-              //    path.removeAt(0);
-              //  }
-              //  
+              if(DistanceCompleted() && path.Count == 0) // we're at the end of the path
+                  path = findPath(position, Enemy.Position);
+              else if(DistanceCompleted()) // we're standing still, but there are more paths to go to
+              {
+                  Seek(path[path.Count-1].position);
+                  path.Remove(path.Count - 1);
+              }
+              
 			}
 		}
 
