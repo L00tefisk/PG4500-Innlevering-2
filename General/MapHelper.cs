@@ -44,12 +44,12 @@ namespace PG4500_2015_Innlevering2.General
 
         static public int Heuristic(Point2D a, Point2D b)
         {
-            return (int)(Math.Abs(a.X - b.X) + Math.Abs(a.Y - b.Y));
+            return 2 * Math.Max((int)(Math.Abs(a.X - b.X), (int)Math.Abs(a.Y - b.Y));
         }
         static public int Cost(Point2D current, Point2D next)
         {
-            int dX = (int)(next.X - current.X);
-            int dY = (int)(next.Y - current.Y);
+            int dX = (int)(next.X + current.X);
+            int dY = (int)(next.Y + current.Y);
             //if abs(dX + dY) == 1, then the node is adjacent and not diagonal.
             if (Math.Abs(dX + dY) == 1)
                 return 1;
@@ -66,7 +66,10 @@ namespace PG4500_2015_Innlevering2.General
 
 			Node nodeStart = new Node(start);
             Node goal = new Node(end);
-		
+
+            robot.Out.WriteLine("nodeStart: " + nodeStart.position.X + " " + nodeStart.position.Y);
+            robot.Out.WriteLine("goal: " + goal.position.X + " " + goal.position.Y);
+
             openList.Enqueue(nodeStart, 0);
             parent.Add(nodeStart, nodeStart);
             distance.Add(nodeStart, 0);
