@@ -10,8 +10,8 @@ namespace PG4500_2015_Innlevering2.General
 	/// </summary>
 	public class Point2D
 	{
-		public int X { get; set; }
-		public int Y { get; set; }
+		public double X { get; set; }
+		public double Y { get; set; }
 
 		/// <summary>
 		/// Default constructor.

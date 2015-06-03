@@ -30,49 +30,67 @@ namespace PG4500_2015_Innlevering2.General
 			new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 		};
 
+		static public Point2D getRandomPosition()
+		{
+			Random rand = new Random();
+			int x = 5, y = 0;
+			while(ColMap[y][x] == 1)
+			{
+				x = rand.Next(3, ColMapWidth-3);
+				y = rand.Next(3, ColMapHeight-3);
+			}
+			return new Point2D(x, y);
+		}
+
         static public int Heuristic(Point2D a, Point2D b)
         {
             return (int)(Math.Abs(a.X - b.X) + Math.Abs(a.Y - b.Y));
         }
         static public int Cost(Point2D current, Point2D next)
         {
-            int dX = next.X - current.X;
-            int dY = next.Y - current.Y;
-            //if abs(dX + dY) == 0, then the node is adjacent and not diagonal.
-            if (Math.Abs(dX + dY) == 0)
+            int dX = (int)(next.X - current.X);
+            int dY = (int)(next.Y - current.Y);
+            //if abs(dX + dY) == 1, then the node is adjacent and not diagonal.
+            if (Math.Abs(dX + dY) == 1)
                 return 1;
             else
                 return 2;
         }
-        static public Dictionary<Node, Node> findPath(Point2D start, Point2D end)
+        static public Dictionary<Node, Node> findPath(Point2D start, Point2D end, Robocode.AdvancedRobotEx robot)
 		{
-            int f = 0, g = 0, h = 0;
+			
             PriorityQueue<Node> openList = new PriorityQueue<Node>();
-            List<Node> closedList = new List<Node>();
             Dictionary<Node, int> distance = new Dictionary<Node, int>();
             Dictionary<Node, Node> parent = new Dictionary<Node, Node>();
-            
-            Node nodeStart = new Node(start);
+
+
+			Node nodeStart = new Node(start);
             Node goal = new Node(end);
+		
             openList.Enqueue(nodeStart, 0);
             parent.Add(nodeStart, nodeStart);
             distance.Add(nodeStart, 0);
 
-            
-
             while (openList.Count > 0)
             {
                 Node current = openList.Dequeue();
-                if (current.Equals(goal))
-                    break;
+				if (current.position.X == end.X && current.position.Y == end.Y)
+				{
+					robot.Out.WriteLine("Found path!");
+					break;
+				}
 
+
+				robot.Out.WriteLine("Current Node: " + current.position.Y + " " + current.position.X);
+				robot.Out.WriteLine("Neighbours.Count: " + current.Neighbours.Count);
                 foreach (Node next in current.Neighbours)
                 {
+					robot.Out.WriteLine("Next Node: " + next.position.Y + " " + next.position.X);
                     // Calculate new cost, check the neighbours if they are passable.
-                    if(ColMap[next.position.X][next.position.Y] == 0)
+                    if(next.position.X >= 0 && next.position.Y >= 0 && next.position.X < MapWidth - 1 && next.position.Y < MapHeight - 1 &&
+						ColMap[(int)next.position.Y][(int)next.position.X] == 0)
                     {
                         int newCost = distance[current] + Cost(current.position, next.position);
-                         
                         // Check if the neighbour isn't already in the open queue
                         if(!distance.ContainsKey(next) || newCost < distance[next])
                         {
@@ -84,7 +102,7 @@ namespace PG4500_2015_Innlevering2.General
                     }
                 }   
             }
-
+			robot.Out.WriteLine("Ran out of options.");
             return parent;
 		}
 

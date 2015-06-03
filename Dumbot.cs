@@ -10,11 +10,10 @@ using Robocode.Util;
 namespace PG4500_2015_Innlevering2
 {
 	// ReSharper disable once InconsistentNaming
-	public class klemag_hyleiv_DumBot : AdvancedRobotEx
+	public class klemag_hyleiv_PathfinderBot : AdvancedRobotEx
 	{
-        private List<Node> path;
      
-		public klemag_hyleiv_DumBot()
+		public klemag_hyleiv_PathfinderBot()
 		{
 
 		}
@@ -23,22 +22,35 @@ namespace PG4500_2015_Innlevering2
 		public override void Run()
 		{
 			InitBot();
-            
+			Out.WriteLine("Distance Completed? " + DistanceCompleted());
+
+			int index = 0;
+			Node[] pathToFollow = new Node[0];
+			Dictionary<Node, Node> path = new Dictionary<Node, Node>();
 			// Loop forever. (Exiting run means no more robot fun for us!)
-            Dictionary<Node, Node> path = new Dictionary<Node, Node>();
-            
 			while (true)
 			{
-
-
-              if(DistanceCompleted() && path.Count == 0) // we're at the end of the path
-                  path = findPath(position, Enemy.Position);
+              if(DistanceCompleted() && pathToFollow.Length == 0) // we're at the end of the path
+			  {
+				  Point2D end = MapHelper.getRandomPosition();
+				  Point2D start = MapHelper.ConvertToColMap((int)X, (int)Y);
+				  Out.WriteLine("Finding new path to: " + end.X + " " + end.Y);
+				  Out.WriteLine("From: " + start.X + " " + start.Y);
+                  path = MapHelper.findPath(start, end, this);
+				  index = 0;
+				  pathToFollow = new Node[path.Values.Count];
+				  path.Values.CopyTo(pathToFollow, 0);
+			  }
               else if(DistanceCompleted()) // we're standing still, but there are more paths to go to
               {
-                  Seek(path[path.Count-1].position);
-                  path.Remove(path.Count - 1);
+				  Out.WriteLine("Following Path");
+				  Node n = pathToFollow[index];
+				  Point2D nextPos = MapHelper.ConvertToColMap((int)n.position.X, (int)n.position.Y);
+                  Seek(nextPos);
+                  index++;
               }
-              
+
+			  Execute();
 			}
 		}
 
@@ -46,9 +58,9 @@ namespace PG4500_2015_Innlevering2
 		public override void OnScannedRobot(ScannedRobotEvent scanData)
 		{
 			// Storing data about scan time and Enemy for later use.
-			Vector2D offset = CalculateTargetVector(HeadingRadians, scanData.BearingRadians, scanData.Distance);
-			Point2D position = new Point2D(offset.X + X, offset.Y + Y);
-			Enemy.SetEnemyData(scanData, position);
+		//	Vector2D offset = CalculateTargetVector(HeadingRadians, scanData.BearingRadians, scanData.Distance);
+			//Point2D position = new Point2D(offset.X + X, offset.Y + Y);
+			//Enemy.SetEnemyData(scanData, position);
 
 		}
 

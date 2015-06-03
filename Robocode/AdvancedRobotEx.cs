@@ -56,24 +56,24 @@ namespace PG4500_2015_Innlevering2.Robocode
 
 		public void Seek(Point2D target)
 		{
-
-			Node destination = new Node(this, target);
-			SetTurnRight(destination.Angle);
-			DrawLineAndTarget(Color.Red, new Point2D(X, Y), target);
-			
-			SetAhead(destination.Distance);
-			Console.WriteLine("Distance = " + destination.Distance);
+			Point2D tar = MapHelper.ConvertFromColMap((int)target.X, (int)target.Y);
+			double distance = Math.Sqrt((tar.X - X) * (tar.X - X) + (tar.Y - Y) * (tar.Y));
+			double angle = Math.Atan2(tar.Y - Y, tar.X - X);
+			SetTurnRight(angle);
+			DrawLineAndTarget(Color.Red, new Point2D(X, Y), tar);
+			SetAhead(distance);
+			Console.WriteLine("Distance = " + distance);
 		}
 
-		public void Flee(Point2D target)
-		{
-			Node destination = new Node(this, target);
-			DrawLineAndTarget(Color.Red, new Point2D(X, Y), target);
-			SetTurnRight(destination.Angle);
-			if (TurnCompleted())
-				SetAhead(-destination.Distance);
+		//public void Flee(Point2D target)
+		//{
+		//	Node destination = new Node(this, target);
+		//	DrawLineAndTarget(Color.Red, new Point2D(X, Y), target);
+		//	SetTurnRight(destination.Angle);
+		//	if (TurnCompleted())
+		//		SetAhead(-destination.Distance);
 
-		}
+		//}
 
 
 		/// <summary>
