@@ -58,7 +58,7 @@ namespace PG4500_2015_Innlevering2.Robocode
 		{
 			Point2D tar = MapHelper.ConvertFromColMap((int)target.X, (int)target.Y);
 			double distance = Math.Sqrt((tar.X - X) * (tar.X - X) + (tar.Y - Y) * (tar.Y - Y));
-			double angle = Math.Atan2(Y - tar.Y, X - tar.X);
+			double angle = Math.Atan2(tar.Y - Y, tar.X - X);
 			SetTurnRightRadians(angle);
 			DrawLineAndTarget(Color.Red, new Point2D(X, Y), tar);
 			SetAhead(distance);
