@@ -44,7 +44,7 @@ namespace PG4500_2015_Innlevering2.General
 
         static public int Heuristic(Point2D a, Point2D b)
         {
-            return 2 * Math.Max((int)(Math.Abs(a.X - b.X), (int)Math.Abs(a.Y - b.Y));
+            return 2 * Math.Max((int)(Math.Abs(a.X - b.X)), (int)Math.Abs(a.Y - b.Y));
         }
         static public int Cost(Point2D current, Point2D next)
         {
@@ -90,7 +90,7 @@ namespace PG4500_2015_Innlevering2.General
                 {
 					robot.Out.WriteLine("Next Node: " + next.position.Y + " " + next.position.X);
                     // Calculate new cost, check the neighbours if they are passable.
-                    if(next.position.X >= 0 && next.position.Y >= 0 && next.position.X < MapWidth - 1 && next.position.Y < MapHeight - 1 &&
+                    if(next.position.X >= 0 && next.position.Y >= 0 && next.position.X < 16 && next.position.Y < 12 &&
 						ColMap[(int)next.position.Y][(int)next.position.X] == 0)
                     {
                         int newCost = distance[current] + Cost(current.position, next.position);

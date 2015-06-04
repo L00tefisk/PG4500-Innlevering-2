@@ -30,24 +30,25 @@ namespace PG4500_2015_Innlevering2
 			// Loop forever. (Exiting run means no more robot fun for us!)
 			while (true)
 			{
-              if(DistanceCompleted() && pathToFollow.Length == 0) // we're at the end of the path
+              if(TurnCompleted() && DistanceCompleted() && pathToFollow.Length == 0) // we're at the end of the path
 			  {
 				  Point2D end = MapHelper.getRandomPosition();
 				  Point2D start = MapHelper.ConvertToColMap((int)X, (int)Y);
 				  Out.WriteLine("Finding new path to: " + end.X + " " + end.Y);
 				  Out.WriteLine("From: " + start.X + " " + start.Y);
                   path = MapHelper.findPath(start, end, this);
-				  index = 0;
+				  index = path.Count - 1;
 				  pathToFollow = new Node[path.Values.Count];
 				  path.Values.CopyTo(pathToFollow, 0);
 			  }
-              else if(DistanceCompleted()) // we're standing still, but there are more paths to go to
+              else if(DistanceCompleted() && TurnCompleted()) // we're standing still, but there are more paths to go to
               {
 				  Out.WriteLine("Following Path");
 				  Node n = pathToFollow[index];
-				  Point2D nextPos = MapHelper.ConvertToColMap((int)n.position.X, (int)n.position.Y);
+				  Out.WriteLine("Node: " + n.position.X + " " + n.position.Y);
+				  Point2D nextPos = new Point2D((int)n.position.X, (int)n.position.Y);
                   Seek(nextPos);
-                  index++;
+                  index--;
               }
 
 			  Execute();

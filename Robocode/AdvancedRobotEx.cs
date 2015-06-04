@@ -57,11 +57,12 @@ namespace PG4500_2015_Innlevering2.Robocode
 		public void Seek(Point2D target)
 		{
 			Point2D tar = MapHelper.ConvertFromColMap((int)target.X, (int)target.Y);
-			double distance = Math.Sqrt((tar.X - X) * (tar.X - X) + (tar.Y - Y) * (tar.Y));
-			double angle = Math.Atan2(tar.Y - Y, tar.X - X);
-			SetTurnRight(angle);
+			double distance = Math.Sqrt((tar.X - X) * (tar.X - X) + (tar.Y - Y) * (tar.Y - Y));
+			double angle = Math.Atan2(Y - tar.Y, X - tar.X);
+			SetTurnRightRadians(angle);
 			DrawLineAndTarget(Color.Red, new Point2D(X, Y), tar);
 			SetAhead(distance);
+			Console.WriteLine("Angle = " + angle);
 			Console.WriteLine("Distance = " + distance);
 		}
 
