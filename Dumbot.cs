@@ -22,36 +22,53 @@ namespace PG4500_2015_Innlevering2
 		public override void Run()
 		{
 			InitBot();
-			Out.WriteLine("Distance Completed? " + DistanceCompleted());
+			List<Node> path = new List<Node>(0);
+			Node nextNode = new Node(0, 0, 0);
+			Location target = new Location(0,0);
+			Location player = new Location(0,0);
+			int pathIndex = 0;
+			bool moveComplete = false;
+			bool moving = false;
+			Execute();
 
-			int index = 0;
-			Node[] pathToFollow = new Node[0];
-			Dictionary<Node, Node> path = new Dictionary<Node, Node>();
-			// Loop forever. (Exiting run means no more robot fun for us!)
 			while (true)
 			{
-              if(TurnCompleted() && DistanceCompleted() && pathToFollow.Length == 0) // we're at the end of the path
-			  {
-				  Point2D end = MapHelper.getRandomPosition();
-				  Point2D start = MapHelper.ConvertToColMap((int)X, (int)Y);
-				  Out.WriteLine("Finding new path to: " + end.X + " " + end.Y);
-				  Out.WriteLine("From: " + start.X + " " + start.Y);
-                  path = MapHelper.findPath(start, end, this);
-				  index = path.Count - 1;
-				  pathToFollow = new Node[path.Values.Count];
-				  path.Values.CopyTo(pathToFollow, 0);
-			  }
-              else if(DistanceCompleted() && TurnCompleted()) // we're standing still, but there are more paths to go to
-              {
-				  Out.WriteLine("Following Path");
-				  Node n = pathToFollow[index];
-				  Out.WriteLine("Node: " + n.position.X + " " + n.position.Y);
-				  Point2D nextPos = new Point2D((int)n.position.X, (int)n.position.Y);
-                  Seek(nextPos);
-                  index--;
-              }
+				if(TurnCompleted() && DistanceCompleted() && path.Count == 0) // we're at the end of the path
+				{
+					Location end = MapHelper.getRandomPosition();
+					Location start = MapHelper.getRandomPosition();
+					while (start.X == end.X && start.Y == end.Y)
+						start = MapHelper.getRandomPosition();
+					
+					Out.WriteLine("Finding new path to: " + end.X + " " + end.Y);
+					Out.WriteLine("From: " + start.X + " " + start.Y);
+					path = MapHelper.AStarSearch2(start, end, this);
+					moveComplete = true;
+				}
 
-			  Execute();
+				if (path.Count != 0)
+				{
+					for (int i = 0; i < path.Count;)
+					{
+						nextNode = path[0];
+						target = new Location(nextNode.position.X, nextNode.position.Y);
+						player = new Location((int)(X / 50), (int)(600 - (Y / 50)));
+						target.X = target.X * 50 + 25;
+						target.Y = 550 - (target.Y * 50) + 25;
+						while (Seek(target, path)) ;
+						path.RemoveAt(0);
+					}
+					
+					for (int i = 0; i < path.Count; i++)
+					{
+						Color halfTransparent = Color.FromArgb(128, Color.Blue);
+						// Draw rectangle at target.
+						Graphics.FillRectangle(new SolidBrush(halfTransparent), (int)((50 * nextNode.position.X)), (int)(600 - (50 * (nextNode.position.Y+1))), 54, 54);
+						Graphics.FillRectangle(new SolidBrush(halfTransparent), (int)((50 * path[i].position.X)), (int)(600 - (50 * (path[i].position.Y+1))), 54, 54);
+
+					}
+				}
+				Execute();
 			}
 		}
 

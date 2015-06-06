@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Robocode;
 
 namespace PG4500_2015_Innlevering2.General
 {
@@ -16,108 +17,203 @@ namespace PG4500_2015_Innlevering2.General
 		private const int ColMapHeight = 12;
 
 		public static int[][] ColMap = {
-			new int[]{0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-			new int[]{0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0},
-			new int[]{1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0},
-			new int[]{1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0},
-			new int[]{0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-			new int[]{0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0},
-			new int[]{0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0},
-			new int[]{0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0},
-			new int[]{0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0},
-			new int[]{0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0},
-			new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0},
-			new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			new int[] {0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			new int[] {0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0},
+			new int[] {1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0},
+			new int[] {1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0},
+			new int[] {0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			new int[] {0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0},
+			new int[] {0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0},
+			new int[] {0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0},
+			new int[] {0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0},
+			new int[] {0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0},
+			new int[] {0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0},
+			new int[] {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 		};
 
-		static public Point2D getRandomPosition()
+		static public Location getRandomPosition()
 		{
 			Random rand = new Random();
 			int x = 5, y = 0;
 			while(ColMap[y][x] == 1)
 			{
-				x = rand.Next(3, ColMapWidth-3);
-				y = rand.Next(3, ColMapHeight-3);
+				x = rand.Next(0, ColMapWidth);
+				y = rand.Next(0, ColMapHeight);
 			}
-			return new Point2D(x, y);
+			return new Location(x, y);
 		}
 
-        static public int Heuristic(Point2D a, Point2D b)
+		static public List<Node> AStarSearch2(Location Start, Location End, Robocode.AdvancedRobotEx robot)
+		{
+			bool foundPath = false;
+			List<Node> path = new List<Node>();
+			List<Node> neighbours = new List<Node>();
+			//Start.X = Start.X / TileSize;
+			//Start.Y = (MapHeight - Start.Y) / TileSize;
+
+			Node start = new Node(Start.X, Start.Y, 0);
+			start.Parent = start;
+			int counter = 0;
+
+			// initialize the open list
+			PriorityQueue<Node> openList = new PriorityQueue<Node>();
+			// initialize the closed list
+			List<Node> closedList = new List<Node>();
+
+			// put the starting node on the open list (you can leave its f at zero)
+			start.f = 0;
+			start.g = 0;
+			start.h = 0;
+			//start.Parent = start;
+			openList.Enqueue(start, 0);
+
+			robot.Out.WriteLine("Searching...");
+
+			// while the open list is not empty
+			while(openList.Count > 0 && !foundPath)
+			{
+				// find the node with the least f on the open list, call it "q"
+				Node current = openList.Dequeue();
+				closedList.Add(current);
+
+				
+				robot.Out.WriteLine("Generating neighbours.");
+				neighbours.Clear();
+				// generate q's 8 successors and set their parents to q
+				for (int y = -1; y < 2; y++)
+				{
+					for (int x = -1; x < 2; x++)
+					{
+						Location tempPos = new Location(current.position.X + x, current.position.Y + y);
+						if (tempPos.X >= 0 && tempPos.X < ColMapWidth &&
+							tempPos.Y >= 0 && tempPos.Y < ColMapHeight &&
+							ColMap[tempPos.Y][tempPos.X] == 0)
+						{
+							Node n = new Node(tempPos.X, tempPos.Y, 0);
+							n.Parent = current;
+
+							if (Math.Abs(y + x) == 1)
+								n.g = 1;
+							else
+								n.g = 15;
+							
+							neighbours.Add(n);
+						}
+					}
+				}
+
+				robot.Out.WriteLine("Searching neighbours...");
+				//  for each successor
+				foreach(Node neighbour in neighbours)
+				{
+					bool skip = false;
+
+					robot.Out.WriteLine("Did we find the goal?");
+					// if successor is the goal, stop the search
+					if (neighbour.isEqual(End))
+					{
+						robot.Out.WriteLine("Found end! (" + neighbour.position.X + ", " + neighbour.position.Y + ") == (" + End.X + ", " + End.Y + ")");
+						foundPath = true;
+						current = neighbour;
+						break;
+					}
+
+					robot.Out.WriteLine("Calculating...");
+
+					//successor.g = q.g + distance between successor and q
+					neighbour.g += current.g;
+
+					//successor.h = distance from goal to successor
+					neighbour.h = Heuristic(neighbour.position, End);
+
+					//successor.f = successor.g + successor.h
+					neighbour.f = neighbour.g + neighbour.h;
+
+					// if a node with the same position as successor is in the OPEN list \
+					// which has a lower f than successor, skip this successor
+
+					for (int i = 0; i < openList.Count; i++)
+					{
+						int sum = ((neighbour.position.X + neighbour.position.Y) - (openList[i].position.X + openList[i].position.Y));
+						if (openList[i].isEqual(neighbour.position) && openList[i].f < neighbour.f)
+						{
+							robot.Out.WriteLine("Openlist position sum: " + sum);
+							robot.Out.WriteLine("F values: " + openList[i].f + " " + neighbour.f);
+							skip = true;
+						}
+					}
+
+					// if a node with the same position as successor is in the CLOSED list \ 
+					// which has a lower f than successor, skip this successor
+					for (int i = 0; i < closedList.Count; i++)
+					{
+						int sum = ((neighbour.position.X + neighbour.position.Y) - (closedList[i].position.X + closedList[i].position.Y));
+						if (closedList[i].isEqual(neighbour.position) && closedList[i].f < neighbour.f)
+						{
+							robot.Out.WriteLine("ClosedList position sum: " + sum);
+							robot.Out.WriteLine("F values: " + closedList[i].f + " " + neighbour.f);
+							skip = true;
+						}
+					}
+					// otherwise, add the node to the open list
+					if (!skip)
+					{
+						openList.Enqueue(neighbour, neighbour.f);
+						robot.Out.WriteLine("Enqueueing!");
+					}
+				}
+				robot.Out.WriteLine("Done searching neighbours..");
+				
+				if (foundPath)
+				{
+					Console.WriteLine("Found path!");
+					robot.Out.WriteLine("openList.Count: " + closedList.Count);
+					robot.Out.WriteLine("closedList.Count: " + closedList.Count);
+					robot.Out.WriteLine("From: (" + Start.X + ", " + Start.Y + ") to (" + End.X + ", " + End.Y + ")");
+					int count = 0;
+					while (true)
+					{
+						robot.Out.WriteLine("Path count: " + ++count);
+						robot.Out.WriteLine("Location (" + current.position.X + ", " + current.position.Y + ")");
+						path.Add(current);
+						current = current.Parent;
+						if (current.isEqual(Start))
+						{
+							path.Add(current);
+							break;
+						}
+					}
+					path.Reverse();
+				}
+			}
+			
+			return path;
+		}
+
+        static public int Heuristic(Location a, Location b)
         {
-            return 2 * Math.Max((int)(Math.Abs(a.X - b.X)), (int)Math.Abs(a.Y - b.Y));
+            return 10 * (Math.Abs(a.X - b.X) + (int)Math.Abs(a.Y - b.Y));
         }
-        static public int Cost(Point2D current, Point2D next)
+        static public int Cost(Location current, Location next)
         {
             int dX = (int)(next.X + current.X);
             int dY = (int)(next.Y + current.Y);
             //if abs(dX + dY) == 1, then the node is adjacent and not diagonal.
             if (Math.Abs(dX + dY) == 1)
-                return 1;
+                return 10;
             else
-                return 2;
+                return 15;
         }
-        static public Dictionary<Node, Node> findPath(Point2D start, Point2D end, Robocode.AdvancedRobotEx robot)
-		{
-			
-            PriorityQueue<Node> openList = new PriorityQueue<Node>();
-            Dictionary<Node, int> distance = new Dictionary<Node, int>();
-            Dictionary<Node, Node> parent = new Dictionary<Node, Node>();
-
-
-			Node nodeStart = new Node(start);
-            Node goal = new Node(end);
-
-            robot.Out.WriteLine("nodeStart: " + nodeStart.position.X + " " + nodeStart.position.Y);
-            robot.Out.WriteLine("goal: " + goal.position.X + " " + goal.position.Y);
-
-            openList.Enqueue(nodeStart, 0);
-            parent.Add(nodeStart, nodeStart);
-            distance.Add(nodeStart, 0);
-
-            while (openList.Count > 0)
-            {
-                Node current = openList.Dequeue();
-				if (current.position.X == end.X && current.position.Y == end.Y)
-				{
-					robot.Out.WriteLine("Found path!");
-					break;
-				}
-
-
-				robot.Out.WriteLine("Current Node: " + current.position.Y + " " + current.position.X);
-				robot.Out.WriteLine("Neighbours.Count: " + current.Neighbours.Count);
-                foreach (Node next in current.Neighbours)
-                {
-					robot.Out.WriteLine("Next Node: " + next.position.Y + " " + next.position.X);
-                    // Calculate new cost, check the neighbours if they are passable.
-                    if(next.position.X >= 0 && next.position.Y >= 0 && next.position.X < 16 && next.position.Y < 12 &&
-						ColMap[(int)next.position.Y][(int)next.position.X] == 0)
-                    {
-                        int newCost = distance[current] + Cost(current.position, next.position);
-                        // Check if the neighbour isn't already in the open queue
-                        if(!distance.ContainsKey(next) || newCost < distance[next])
-                        {
-                            distance.Add(next, newCost);
-                            int priority = newCost + Heuristic(current.position, next.position);
-                            openList.Enqueue(next, priority);
-                            parent.Add(next, current);
-                        }
-                    }
-                }   
-            }
-			robot.Out.WriteLine("Ran out of options.");
-            return parent;
-		}
 
 		static public Point2D ConvertToColMap(int x, int y)
 		{
 			//ReSharper disable PossibleLossOfFraction , as we want to "Floor" the values anyway
-			return new Point2D(x / TileSize, y / TileSize);
+			return new Point2D(x / TileSize, ColMapHeight - (y / TileSize));
 		}
 
 		static public Point2D ConvertFromColMap(int x, int y)
 		{
-			return new Point2D((x * TileSize) + (TileSize / 2), MapHeight - (y * TileSize) + (TileSize / 2));
+			return new Point2D((x * TileSize) + (TileSize / 2) , (y * TileSize) + (TileSize / 2));
 		}
 	}
 }
@@ -154,7 +250,7 @@ locations such as current and next are written with letters u, v
             int newCost = distance[current]
                 + graph.Cost(current, next);
             if (!distance.ContainsKey(next)
-                || newCost < costSoFar[next])
+                || newCost < distance[next])
             {
                 distance.Add(next, newCost);
                 int priority = newCost + Heuristic(next, goal);
@@ -164,3 +260,57 @@ locations such as current and next are written with letters u, v
         }
     }
 */
+
+//static public Dictionary<Node, Node> findPath(Point2D start, Point2D end, Robocode.AdvancedRobotEx robot)
+//{
+
+//	PriorityQueue<Node> openList = new PriorityQueue<Node>();
+//	Dictionary<Node, int> distance = new Dictionary<Node, int>();
+//	Dictionary<Node, Node> closedList = new Dictionary<Node, Node>();
+
+
+//	Node nodeStart = new Node(start);
+//	Node goal = new Node(end);
+
+//   // robot.Out.WriteLine("nodeStart: " + nodeStart.position.X + " " + nodeStart.position.Y);
+//   // robot.Out.WriteLine("goal: " + goal.position.X + " " + goal.position.Y);
+
+//	closedList.Add(nodeStart, nodeStart);
+//	openList.Enqueue(nodeStart, 0);
+//	distance.Add(nodeStart, 0);
+
+//	while (openList.Count > 0)
+//	{
+//		Node current = openList.Dequeue();
+//		if (current.position.X == end.X && current.position.Y == end.Y)
+//		{
+//			robot.Out.WriteLine("Found path!");
+//			break;
+//		}
+
+
+//		//robot.Out.WriteLine("Current Node: " + current.position.Y + " " + current.position.X);
+//		//robot.Out.WriteLine("Neighbours.Count: " + current.Neighbours.Count);
+//		foreach (Node next in current.Neighbours)
+//		{
+//			int X = (int)next.position.X;
+//			int Y = (int)next.position.Y;
+//			//robot.Out.WriteLine("Next Node: " + next.position.Y + " " + next.position.X);
+//			// Calculate new cost, check the neighbours if they are passable.
+//			if (X >= 0 && Y >= 0 && X < 16 && Y < 12 && ColMap[Y][X] == 0)
+//			{
+//				int newCost = distance[current] + Cost(current.position, next.position);
+//				// Check if the neighbour isn't already in the open queue
+//				if(!distance.ContainsKey(next) || newCost < distance[next])
+//				{
+//					distance.Add(next, newCost);
+//					int priority = newCost + Heuristic(current.position, next.position);
+//					openList.Enqueue(next, priority);
+//					closedList.Add(next, current);
+//				}
+//			}
+//		}   
+//	}
+//	robot.Out.WriteLine("Ran out of options.");
+//	return closedList;
+//}

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using PG4500_2015_Innlevering2.General;
 using Robocode;
@@ -33,7 +34,6 @@ namespace PG4500_2015_Innlevering2.Robocode
 		public double FireThreshold { get; set; } //Maximum distance the enemy can have before our robot stops trying to shoot it
 		public bool HasLock { get; set; }
 
-
 		// P U B L I C   M E T H O D S 
 		// ---------------------------
 
@@ -54,16 +54,57 @@ namespace PG4500_2015_Innlevering2.Robocode
 			return Math.Abs(TurnRemaining).IsCloseToZero();
 		}
 
-		public void Seek(Point2D target)
+		public bool turned = false;
+		public bool moved = false;
+
+		public bool Seek(Location tar, List<Node> path)
 		{
-			Point2D tar = MapHelper.ConvertFromColMap((int)target.X, (int)target.Y);
 			double distance = Math.Sqrt((tar.X - X) * (tar.X - X) + (tar.Y - Y) * (tar.Y - Y));
-			double angle = Math.Atan2(tar.Y - Y, tar.X - X);
-			SetTurnRightRadians(angle);
-			DrawLineAndTarget(Color.Red, new Point2D(X, Y), tar);
-			SetAhead(distance);
-			Console.WriteLine("Angle = " + angle);
-			Console.WriteLine("Distance = " + distance);
+			double angle = HeadingRadians - Math.Atan2(tar.X - X, tar.Y - Y);
+
+			if (TurnRemaining == 0 && DistanceRemaining == 0)
+			{
+				if (angle > 0)
+				{
+					SetTurnRightRadians(angle);
+				}
+				else
+				{
+					SetTurnLeftRadians(angle);
+				}
+
+				while (TurnRemaining != 0)
+				{
+					DrawLineAndTarget(Color.Red, new Point2D(X, Y), new Point2D(tar.X, tar.Y));
+					for (int i = 0; i < path.Count; i++)
+					{
+						Color halfTransparent = Color.FromArgb(128, Color.Blue);
+						// Draw rectangle at target.
+						Graphics.FillRectangle(new SolidBrush(halfTransparent), (int)((50 * path[i].position.X)), (int)(600 - (50 * (path[i].position.Y + 1))), 54, 54);
+
+					}
+
+					Execute();
+				}
+
+				SetAhead(distance);
+				while (DistanceRemaining != 0)
+				{
+					for (int i = 0; i < path.Count; i++)
+					{
+						Color halfTransparent = Color.FromArgb(128, Color.Blue);
+						// Draw rectangle at target.
+						Graphics.FillRectangle(new SolidBrush(halfTransparent), (int)((50 * path[i].position.X)), (int)(600 - (50 * (path[i].position.Y + 1))), 54, 54);
+
+					}
+					DrawLineAndTarget(Color.Red, new Point2D(X, Y), new Point2D(tar.X, tar.Y));
+					Execute();
+				}
+
+				return false;
+			}
+			Execute();
+			return true;
 		}
 
 		//public void Flee(Point2D target)
