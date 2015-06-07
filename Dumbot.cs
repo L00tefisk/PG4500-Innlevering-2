@@ -33,19 +33,24 @@ namespace PG4500_2015_Innlevering2
 
 			while (true)
 			{
-				if(TurnCompleted() && DistanceCompleted() && path.Count == 0) // we're at the end of the path
-				{
-					Location end = MapHelper.getRandomPosition();
-					Location start = MapHelper.getRandomPosition();
-					while (start.X == end.X && start.Y == end.Y)
-						start = MapHelper.getRandomPosition();
-					
-					Out.WriteLine("Finding new path to: " + end.X + " " + end.Y);
-					Out.WriteLine("From: " + start.X + " " + start.Y);
-					path = MapHelper.AStarSearch2(start, end, this);
-					moveComplete = true;
-				}
+                if (!HasLock)
+                {
+                    SearchBot();
+                }
+                else
+                {
+                    LockBot();
+                }
+                if (TurnCompleted() && DistanceCompleted() && path.Count == 0 && HasLock) // we're at the end of the path
+                {
+                    Location end = MapHelper.ConvertToColMap((int)Enemy.Position.X, (int)Enemy.Position.Y);
+                    Location start = MapHelper.ConvertToColMap((int)X, (int)Y);
 
+                    Out.WriteLine("Finding new path to: " + end.X + " " + end.Y);
+                    Out.WriteLine("From: " + start.X + " " + start.Y);
+                    path = MapHelper.AStarSearch2(start, end, this);
+                    moveComplete = true;
+                }
 				if (path.Count != 0)
 				{
 					for (int i = 0; i < path.Count;)
@@ -63,23 +68,13 @@ namespace PG4500_2015_Innlevering2
 					{
 						Color halfTransparent = Color.FromArgb(128, Color.Blue);
 						// Draw rectangle at target.
-						Graphics.FillRectangle(new SolidBrush(halfTransparent), (int)((50 * nextNode.position.X)), (int)(600 - (50 * (nextNode.position.Y+1))), 54, 54);
-						Graphics.FillRectangle(new SolidBrush(halfTransparent), (int)((50 * path[i].position.X)), (int)(600 - (50 * (path[i].position.Y+1))), 54, 54);
+						Graphics.FillRectangle(new SolidBrush(halfTransparent), (int)((50 * nextNode.position.X)), (int)(600 - (50 * (nextNode.position.Y+1))), 50, 50);
+						Graphics.FillRectangle(new SolidBrush(halfTransparent), (int)((50 * path[i].position.X)), (int)(600 - (50 * (path[i].position.Y+1))), 50, 50);
 
 					}
 				}
 				Execute();
 			}
-		}
-
-
-		public override void OnScannedRobot(ScannedRobotEvent scanData)
-		{
-			// Storing data about scan time and Enemy for later use.
-		//	Vector2D offset = CalculateTargetVector(HeadingRadians, scanData.BearingRadians, scanData.Distance);
-			//Point2D position = new Point2D(offset.X + X, offset.Y + Y);
-			//Enemy.SetEnemyData(scanData, position);
-
 		}
 
 		// Inits robot stuff (color and such).
@@ -94,5 +89,62 @@ namespace PG4500_2015_Innlevering2
 				Color.Red //Scan arc
 				);
 		}
+
+        public override void OnScannedRobot(ScannedRobotEvent scanData)
+        {
+            // Storing data about scan time and Enemy for later use.
+            Vector2D offset = CalculateTargetVector(HeadingRadians, scanData.BearingRadians, scanData.Distance);
+            Point2D position = new Point2D(offset.X + X, offset.Y + Y);
+            Enemy.SetEnemyData(scanData, position);
+
+        }
+
+        private Vector2D CalculateTargetVector(double ownHeadingRadians, double bearingToTargetRadians, double distance)
+        {
+            double battlefieldRelativeTargetAngleRadians = Utils.NormalRelativeAngle(ownHeadingRadians + bearingToTargetRadians);
+            Vector2D targetVector = new Vector2D(Math.Sin(battlefieldRelativeTargetAngleRadians) * distance,
+                                                 Math.Cos(battlefieldRelativeTargetAngleRadians) * distance);
+            return targetVector;
+        }
+
+        public void SearchBot()
+        {
+            if (Enemy.Name == null) // We haven't seen the enemy yet
+            {
+                SetTurnRadarRight(Rules.RADAR_TURN_RATE);
+                Console.WriteLine("LOOP 1");
+            }
+            else // We lost the enemy, search in the direction of the last known position
+            {
+                // Get the angle between the radarheading and the robot.
+                double angle = MathHelpers.normalizeBearing(-RadarHeading) +
+                    // X and Y are swapped in atan2 because of robocode's weird coordinate system.
+                               (Math.Atan2(Enemy.Position.X - X, Enemy.Position.Y - Y) * (180 / 3.1415));
+
+                angle = MathHelpers.normalizeBearing(angle);
+                if (angle > -0.001 && angle < 0.001)
+                {
+                    SetTurnRadarRight(Rules.RADAR_TURN_RATE);
+                    Console.WriteLine("LOOP 2");
+                }
+                else
+                {
+                    SetTurnRadarRight(angle);
+                    Console.WriteLine("LOOP 3");
+                }
+            }
+        }
+
+        public void LockBot()
+        {
+            double radarTurn =
+                // Absolute bearing to target
+                HeadingRadians + Enemy.BearingRadians
+                // Subtract current radar heading to get turn required
+            - RadarHeadingRadians;
+
+            SetTurnRadarRightRadians(Utils.NormalRelativeAngle(radarTurn));
+            // ...
+        }
 	}
 }
