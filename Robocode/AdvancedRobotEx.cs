@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using PG4500_2015_Innlevering2.General;
 using Robocode;
-
+using Robocode.Util;
 //TODO: BYTT NAMESPACE NAVN
 namespace PG4500_2015_Innlevering2.Robocode
 {
@@ -60,18 +60,12 @@ namespace PG4500_2015_Innlevering2.Robocode
 		public bool Seek(Location tar, List<Node> path)
 		{
 			double distance = Math.Sqrt((tar.X - X) * (tar.X - X) + (tar.Y - Y) * (tar.Y - Y));
-			double angle = HeadingRadians - Math.Atan2(tar.X - X, tar.Y - Y);
-
+			//double angle = MathHelpers.normalizeBearing(Heading) -  (Math.Atan2(tar.X - X, tar.Y - Y) * (180 / 3.1415));
+			double angle = Utils.NormalRelativeAngle(HeadingRadians - Math.Atan2(tar.X - X, tar.Y - Y));
 			if (TurnRemaining == 0 && DistanceRemaining == 0)
 			{
-				if (angle > 0)
-				{
-					SetTurnRightRadians(angle);
-				}
-				else
-				{
-					SetTurnLeftRadians(angle);
-				}
+				SetTurnLeftRadians(angle);
+				
 
 				while (TurnRemaining != 0)
 				{
