@@ -1,4 +1,10 @@
-﻿using System;
+﻿// This code was made by amitp on redblobgames.com
+// You can find the code here: http://www.redblobgames.com/pathfinding/a-star/implementation.html
+
+// We edited the code a bit to work better with our project.
+// And added the Contains() method.
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;

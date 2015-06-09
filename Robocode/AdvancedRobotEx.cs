@@ -32,7 +32,11 @@ namespace PG4500_2015_Innlevering2.Robocode
 
 		public EnemyData Enemy { get; set; }  // Stored info about our current radar target. (Wiped each round/match.)
 		public double FireThreshold { get; set; } //Maximum distance the enemy can have before our robot stops trying to shoot it
-		public bool HasLock { get; set; }
+		public bool HasRadarLock { get; set; }
+
+		// Used in the Seek function
+		private bool turned = false;
+		private bool moved = false;
 
 		// P U B L I C   M E T H O D S 
 		// ---------------------------
@@ -54,9 +58,6 @@ namespace PG4500_2015_Innlevering2.Robocode
 			return Math.Abs(TurnRemaining).IsCloseToZero();
 		}
 
-
-		private bool turned = false;
-		private bool moved = false;
 		public bool Seek(Location tar, List<Node> path)
 		{
 			double distance = Math.Sqrt((tar.X - X) * (tar.X - X) + (tar.Y - Y) * (tar.Y - Y));
@@ -64,31 +65,36 @@ namespace PG4500_2015_Innlevering2.Robocode
 			double angle = Utils.NormalRelativeAngle(HeadingRadians - Math.Atan2(tar.X - X, tar.Y - Y));
 			DrawLineAndTarget(Color.Red, new Point2D(X, Y), new Point2D(tar.X, tar.Y));
 
+			// This fixes a bug we had where the robot would rotate 90 degrees CCW then CW
 			if (!turned && !moved && distance.IsCloseToZero(0.01))
 				turned = true;
 
-			if (DistanceRemaining == 0 && TurnRemaining == 0 && turned && moved)
+			// in some cases this can actually cause us to back into the robot!
+			// This doesn't work in all cases, but it's an easy fix for most of them!
+			if (Enemy.Distance < 60)
+				SetAhead(-distance);
+
+			if (DistanceRemaining == 0 && TurnRemaining == 0 && turned && moved) // we've reached the goal
 			{
-				Console.Out.WriteLine("Goal!");
 				turned = false;
 				moved = false;
 				return false;
 			}
-			else if(TurnRemaining == 0 && turned && !moved)
+			else if(TurnRemaining == 0 && turned && !moved) // we're done rotating
 			{
 				Console.Out.WriteLine("Moving!");
 				moved = true;
 				SetAhead(distance);
 				return true;
 			}
-			else if (!turned && !moved)
+			else if (!turned && !moved) // We haven't moved yet and need to rotate!
 			{
 				Console.Out.WriteLine("Turning!");
 				turned = true;
 				SetTurnLeftRadians(angle);				
 				return true;
 			}
-			
+
 			return true;
 		}
         public void Seek(Location tar)

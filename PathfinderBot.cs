@@ -35,16 +35,16 @@ namespace PG4500_2015_Innlevering2
 			{
 				FindBot();
 
-                if (path.Count == 0 && Enemy.Velocity.IsCloseToZero() && HasLock) // we're at the end of the path
+                if (path.Count == 0 && Enemy.Velocity.IsCloseToZero() && HasRadarLock) // we're at the end of the path
                 {
                     Location end = MapHelper.ConvertToColMap((int)Enemy.Position.X, (int)Enemy.Position.Y);
                     Location start = MapHelper.ConvertToColMap((int)X, (int)Y);
                     path = MapHelper.AStarSearch2(start, end, this);
                 }
 
-				if (path.Count != 0)
+				if (path.Count != 0) // we have a path!
 				{
-					for (int i = 0; i < path.Count;)
+					for (int i = 0; i < path.Count;) // Go through all the locations in the list.
 					{
 						nextNode = path[0];
 						target = new Location(nextNode.position.X, nextNode.position.Y);
@@ -52,6 +52,7 @@ namespace PG4500_2015_Innlevering2
 						target.X = (target.X * 50) + 25;
 						target.Y = 550 - (target.Y * 50) + 25;
 
+						// seek will return false when it has reached the target.
 						while (Seek(target, path))
 						{
 							drawPath();
@@ -66,18 +67,18 @@ namespace PG4500_2015_Innlevering2
 						}
 					}
 				}
-				HasLock = false;
+				HasRadarLock = false;
 				Execute();
 			}
 		}
 
+		// Draw our robots path.
 		private void drawPath()
 		{
 			for (int i = 0; i < path.Count; i++)
 			{
 				Color halfTransparent = Color.FromArgb(128, Color.Blue);
 				// Draw rectangle at target.
-				//Graphics.FillRectangle(new SolidBrush(halfTransparent), (int)((50 * nextNode.position.X)), (int)(600 - (50 * (nextNode.position.Y+1))), 50, 50);
 				Graphics.FillRectangle(new SolidBrush(halfTransparent), (50 * path[i].position.X), 550 - (path[i].position.Y * 50), 50, 50);
 
 			}
@@ -103,7 +104,7 @@ namespace PG4500_2015_Innlevering2
             Point2D offset = CalculateTargetVector(HeadingRadians, scanData.BearingRadians, scanData.Distance);
             Point2D position = new Point2D(offset.X + X, offset.Y + Y);
             Enemy.SetEnemyData(scanData, position);
-			HasLock = true;
+			HasRadarLock = true;
 
         }
         private Point2D CalculateTargetVector(double ownHeadingRadians, double bearingToTargetRadians, double distance)
@@ -114,9 +115,10 @@ namespace PG4500_2015_Innlevering2
             return targetVector;
         }
 
+		// These three functions tries to find the bot with the radar.
 		public void FindBot()
 		{
-			if (HasLock)
+			if (HasRadarLock)
 			{
 				LockBot();
 			}

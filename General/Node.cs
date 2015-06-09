@@ -25,5 +25,4 @@ namespace PG4500_2015_Innlevering2.General
 		}
 
 	}
-	// override object.Equals
 }
