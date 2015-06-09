@@ -21,10 +21,5 @@ namespace PG4500_2015_Innlevering2.General
 		{
 			return (X == l.X && Y == l.Y);
 		}
-
-		public bool isEqual(int x, int y)
-		{
-			return (X == x && Y == y);
-		}
 	}
 }

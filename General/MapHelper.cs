@@ -63,7 +63,8 @@ namespace PG4500_2015_Innlevering2.General
 				counter++;
 				if (counter > 500) // We couldn't find a path, return empty list;
 					return path;
-				// find the node with the least f on the open list, call it "q"
+
+				// find the node with highest priority
 				Node current = openList.Dequeue();
 				closedList.Add(current);
 
@@ -105,8 +106,6 @@ namespace PG4500_2015_Innlevering2.General
 						break;
 					}
 
-					robot.Out.WriteLine("Calculating...");
-
 					//successor.g = q.g + distance between successor and q
 					neighbour.g += current.g;
 
@@ -140,13 +139,13 @@ namespace PG4500_2015_Innlevering2.General
 						openList.Enqueue(neighbour, neighbour.f);
 
 				}
-				robot.Out.WriteLine("Done searching neighbours..");
 				
 				if (foundPath)
 				{
 					while (true)
 					{
 						path.Add(current);
+						Console.Out.WriteLine("Node(" + current.position.X + ", " + current.position.Y + ")");
 						current = current.Parent;
 						if (current.isEqual(Start))
 						{
@@ -169,7 +168,7 @@ namespace PG4500_2015_Innlevering2.General
         {
             int dX = (int)(next.X + current.X);
             int dY = (int)(next.Y + current.Y);
-            //if abs(dX + dY) == 1, then the node is adjacent and not diagonal.
+            //if abs(dX + dY) == 1, then the node is adjacent.
             if (Math.Abs(dX + dY) == 1)
                 return 10;
             else
@@ -178,13 +177,8 @@ namespace PG4500_2015_Innlevering2.General
 
 		static public Location ConvertToColMap(int x, int y)
 		{
-			//ReSharper disable PossibleLossOfFraction , as we want to "Floor" the values anyway
-			return new Location(x / TileSize, ColMapHeight - (y / TileSize));
-		}
-
-		static public Point2D ConvertFromColMap(int x, int y)
-		{
-			return new Point2D((x * TileSize) + (TileSize / 2) , (y * TileSize) + (TileSize / 2));
+			//ReSharper disable PossibleLossOfFraction, as we want to "Floor" the values anyway
+			return new Location(x / TileSize, (MapHeight - y) / TileSize);
 		}
 	}
 }

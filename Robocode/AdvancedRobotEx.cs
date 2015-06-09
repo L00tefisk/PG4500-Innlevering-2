@@ -54,50 +54,41 @@ namespace PG4500_2015_Innlevering2.Robocode
 			return Math.Abs(TurnRemaining).IsCloseToZero();
 		}
 
-		public bool turned = false;
-		public bool moved = false;
 
+		private bool turned = false;
+		private bool moved = false;
 		public bool Seek(Location tar, List<Node> path)
 		{
 			double distance = Math.Sqrt((tar.X - X) * (tar.X - X) + (tar.Y - Y) * (tar.Y - Y));
 			//double angle = MathHelpers.normalizeBearing(Heading) -  (Math.Atan2(tar.X - X, tar.Y - Y) * (180 / 3.1415));
 			double angle = Utils.NormalRelativeAngle(HeadingRadians - Math.Atan2(tar.X - X, tar.Y - Y));
-			if (TurnRemaining == 0 && DistanceRemaining == 0)
+			DrawLineAndTarget(Color.Red, new Point2D(X, Y), new Point2D(tar.X, tar.Y));
+
+			if (!turned && !moved && distance.IsCloseToZero(0.01))
+				turned = true;
+
+			if (DistanceRemaining == 0 && TurnRemaining == 0 && turned && moved)
 			{
-				SetTurnLeftRadians(angle);
-				
-
-				while (TurnRemaining != 0)
-				{
-					DrawLineAndTarget(Color.Red, new Point2D(X, Y), new Point2D(tar.X, tar.Y));
-					for (int i = 0; i < path.Count; i++)
-					{
-						Color halfTransparent = Color.FromArgb(128, Color.Blue);
-						// Draw rectangle at target.
-						Graphics.FillRectangle(new SolidBrush(halfTransparent), (int)((50 * path[i].position.X)), (int)(600 - (50 * (path[i].position.Y + 1))), 54, 54);
-
-					}
-
-					Execute();
-				}
-
-				SetAhead(distance);
-				while (DistanceRemaining != 0)
-				{
-					for (int i = 0; i < path.Count; i++)
-					{
-						Color halfTransparent = Color.FromArgb(128, Color.Blue);
-						// Draw rectangle at target.
-						Graphics.FillRectangle(new SolidBrush(halfTransparent), (int)((50 * path[i].position.X)), (int)(600 - (50 * (path[i].position.Y + 1))), 54, 54);
-
-					}
-					DrawLineAndTarget(Color.Red, new Point2D(X, Y), new Point2D(tar.X, tar.Y));
-					Execute();
-				}
-
+				Console.Out.WriteLine("Goal!");
+				turned = false;
+				moved = false;
 				return false;
 			}
-			Execute();
+			else if(TurnRemaining == 0 && turned && !moved)
+			{
+				Console.Out.WriteLine("Moving!");
+				moved = true;
+				SetAhead(distance);
+				return true;
+			}
+			else if (!turned && !moved)
+			{
+				Console.Out.WriteLine("Turning!");
+				turned = true;
+				SetTurnLeftRadians(angle);				
+				return true;
+			}
+			
 			return true;
 		}
         public void Seek(Location tar)
@@ -110,7 +101,6 @@ namespace PG4500_2015_Innlevering2.Robocode
 
             do
             {
-                Out.WriteLine(distance);
                 if (TurnRemaining != 0)
                 {
                     angle = Utils.NormalRelativeAngle(HeadingRadians - Math.Atan2(tar.X - X, tar.Y - Y));
@@ -130,15 +120,8 @@ namespace PG4500_2015_Innlevering2.Robocode
             } while (!MathHelpers.IsCloseToZero(distance));
 
         }
-		//public void Flee(Point2D target)
-		//{
-		//	Node destination = new Node(this, target);
-		//	DrawLineAndTarget(Color.Red, new Point2D(X, Y), target);
-		//	SetTurnRight(destination.Angle);
-		//	if (TurnCompleted())
-		//		SetAhead(-destination.Distance);
 
-		//}
+
 
 
 		/// <summary>
