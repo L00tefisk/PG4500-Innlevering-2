@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Security.Cryptography;
 using PG4500_2015_Innlevering2.General;
 using PG4500_2015_Innlevering2.Robocode;
 using Robocode;
@@ -32,7 +33,7 @@ namespace PG4500_2015_Innlevering2
 			{
                 if (HasLock)
                 {
-					LockBot();
+                    LockBot();
                 }
                 else
                 {
@@ -87,6 +88,7 @@ namespace PG4500_2015_Innlevering2
 				Color.OrangeRed, //Bullet
 				Color.Red //Scan arc
 				);
+		    Seek(new Location(25, 25));
 		}
 
         public override void OnScannedRobot(ScannedRobotEvent scanData)
@@ -111,11 +113,12 @@ namespace PG4500_2015_Innlevering2
             if (Enemy.Name == null) // We haven't seen the enemy yet
             {
                 SetTurnRadarRight(Rules.RADAR_TURN_RATE);
-                Console.WriteLine("LOOP 1");
+                
             }
             else // We lost the enemy, search in the direction of the last known position
             {
-				SetTurnRadarRight(Rules.RADAR_TURN_RATE);
+                Console.WriteLine("LOOP 1");
+				SetTurnRadarLeft(Rules.RADAR_TURN_RATE);
 				//// Get the angle between the radarheading and the robot.
 				//double angle = MathHelpers.normalizeBearing(-RadarHeading) +
 				//	// X and Y are swapped in atan2 because of robocode's weird coordinate system.
@@ -138,6 +141,8 @@ namespace PG4500_2015_Innlevering2
 
         public void LockBot()
         {
+            Console.WriteLine("LOOP 2");
+            
             double radarTurn =
                 // Absolute bearing to target
                 HeadingRadians + Enemy.BearingRadians

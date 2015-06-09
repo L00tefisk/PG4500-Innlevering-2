@@ -83,9 +83,9 @@ namespace PG4500_2015_Innlevering2.General
 							n.Parent = current;
 
 							if (Math.Abs(y + x) == 1)
-								n.g = 1;
+								n.g = 10;
 							else
-								n.g = 15;
+								n.g = 14.1;
 							
 							neighbours.Add(n);
 						}
