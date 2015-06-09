@@ -94,16 +94,13 @@ namespace PG4500_2015_Innlevering2
         public override void OnScannedRobot(ScannedRobotEvent scanData)
         {
             // Storing data about scan time and Enemy for later use.
-            Vector2D offset = CalculateTargetVector(HeadingRadians, scanData.BearingRadians, scanData.Distance);
             Point2D position = new Point2D(offset.X + X, offset.Y + Y);
             Enemy.SetEnemyData(scanData, position);
 			HasLock = true;
 
         }
-        private Vector2D CalculateTargetVector(double ownHeadingRadians, double bearingToTargetRadians, double distance)
         {
             double battlefieldRelativeTargetAngleRadians = Utils.NormalRelativeAngle(ownHeadingRadians + bearingToTargetRadians);
-            Vector2D targetVector = new Vector2D(Math.Sin(battlefieldRelativeTargetAngleRadians) * distance,
                                                  Math.Cos(battlefieldRelativeTargetAngleRadians) * distance);
             return targetVector;
         }
@@ -154,3 +151,4 @@ namespace PG4500_2015_Innlevering2
         }
 	}
 }
+

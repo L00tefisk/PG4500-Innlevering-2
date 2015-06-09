@@ -30,12 +30,6 @@ namespace PG4500_2015_Innlevering2.General
 			Y = cloneMe.Y;
 		}
 
-		public Point2D(Vector2D cloneMe)
-		{
-			X = cloneMe.X;
-			Y = cloneMe.Y;
-		}
-
 		/// <summary>
 		/// Constructor.
 		/// </summary>

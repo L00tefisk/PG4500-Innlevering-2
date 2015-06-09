@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>PG4500_2015_Innlevering2</RootNamespace>
-    <AssemblyName>PG4500_2015_Innlevering1</AssemblyName>
+    <AssemblyName>PG4500_2015_Innlevering2</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -48,8 +48,7 @@
     <Compile Include="General\MathHelpers.cs" />
     <Compile Include="General\Point2D.cs" />
     <Compile Include="General\PriorityQueue.cs" />
-    <Compile Include="General\Vector2D.cs" />
-    <Compile Include="Dumbot.cs" />
+    <Compile Include="PathfinderBot.cs" />
     <Compile Include="General\Node.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Robocode\AdvancedRobotEx.cs" />
