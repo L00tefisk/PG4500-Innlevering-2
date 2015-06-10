@@ -58,8 +58,6 @@ namespace PG4500_2015_Innlevering2.Robocode
 			return Math.Abs(TurnRemaining).IsCloseToZero();
 		}
 
-		// Seek is used in a while loop, when it returns false the while loop will finish and
-		// that means we have finished moving.
 		public bool Seek(Location tar)
 		{
 			double distance = Math.Sqrt((tar.X - X) * (tar.X - X) + (tar.Y - Y) * (tar.Y - Y));
@@ -70,11 +68,11 @@ namespace PG4500_2015_Innlevering2.Robocode
 			// This fixes a bug we had where the robot would rotate 90 degrees CCW then CW
 			if (!turned && !moved && distance.IsCloseToZero(0.01))
 				turned = true;
-
 			// in some cases this can actually cause us to back into the robot!
 			// This doesn't work in all cases, but it's an easy fix for most of them!
-			if (Enemy.Distance < 60)
+			if (Enemy.Distance < 60 && turned)
 				SetAhead(-distance);
+
 
 			if (DistanceRemaining == 0 && TurnRemaining == 0 && turned && moved) // we've reached the goal
 			{
@@ -97,7 +95,6 @@ namespace PG4500_2015_Innlevering2.Robocode
 				return true;
 			}
 
-			// we're still moving or rotating, so we need to keep going.
 			return true;
 		}
 		//public void Seek(Location tar)
