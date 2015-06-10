@@ -45,7 +45,7 @@ namespace PG4500_2015_Innlevering2.Robocode
 			Time = 0;
 			Name = null;
 			BearingRadians = 0.0;
-			Distance = 0.0;
+			Distance = 1000.0; // This is set to 1000 so it doesn't mess with our seek() function at the start of the battle.
 			Energy = 0.0;
 			PreviousEnergy = 0.0;
 			Position = new Point2D();
