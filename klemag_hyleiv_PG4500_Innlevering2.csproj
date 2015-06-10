@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>PG4500_2015_Innlevering2</RootNamespace>
-    <AssemblyName>PG4500_2015_Innlevering2</AssemblyName>
+    <AssemblyName>klemag_hyleiv_PathfinderBot</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

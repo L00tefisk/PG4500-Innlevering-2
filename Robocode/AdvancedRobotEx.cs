@@ -69,7 +69,7 @@ namespace PG4500_2015_Innlevering2.Robocode
 
 			// This fixes a bug we had where the robot would rotate 90 degrees CCW then CW
 			if (!turned && !moved && distance.IsCloseToZero(0.01))
-				turned = false;
+				turned = true;
 
 			// in some cases this can actually cause us to back into the robot!
 			// This doesn't work in all cases, but it's an easy fix for most of them!
