@@ -58,7 +58,7 @@ namespace PG4500_2015_Innlevering2.Robocode
 			return Math.Abs(TurnRemaining).IsCloseToZero();
 		}
 
-		public bool Seek(Location tar, List<Node> path)
+		public bool Seek(Location tar)
 		{
 			double distance = Math.Sqrt((tar.X - X) * (tar.X - X) + (tar.Y - Y) * (tar.Y - Y));
 			//double angle = MathHelpers.normalizeBearing(Heading) -  (Math.Atan2(tar.X - X, tar.Y - Y) * (180 / 3.1415));
@@ -97,35 +97,35 @@ namespace PG4500_2015_Innlevering2.Robocode
 
 			return true;
 		}
-        public void Seek(Location tar)
-        {
-            double distance = Math.Sqrt((tar.X - X) * (tar.X - X) + (tar.Y - Y) * (tar.Y - Y));
-            //double angle = MathHelpers.normalizeBearing(Heading) -  (Math.Atan2(tar.X - X, tar.Y - Y) * (180 / 3.1415));
-            double angle = Utils.NormalRelativeAngle(HeadingRadians - Math.Atan2(tar.X - X, tar.Y - Y));
-            SetTurnLeftRadians(angle);
-            Execute();
+		//public void Seek(Location tar)
+		//{
+		//	double distance = Math.Sqrt((tar.X - X) * (tar.X - X) + (tar.Y - Y) * (tar.Y - Y));
+		//	//double angle = MathHelpers.normalizeBearing(Heading) -  (Math.Atan2(tar.X - X, tar.Y - Y) * (180 / 3.1415));
+		//	double angle = Utils.NormalRelativeAngle(HeadingRadians - Math.Atan2(tar.X - X, tar.Y - Y));
+		//	SetTurnLeftRadians(angle);
+		//	Execute();
 
-            do
-            {
-                if (TurnRemaining != 0)
-                {
-                    angle = Utils.NormalRelativeAngle(HeadingRadians - Math.Atan2(tar.X - X, tar.Y - Y));
-                    SetTurnLeftRadians(angle);
-                }
-                else
-                {
-                    distance = Math.Sqrt((tar.X - X) * (tar.X - X) + (tar.Y - Y) * (tar.Y - Y));
+		//	do
+		//	{
+		//		if (TurnRemaining != 0)
+		//		{
+		//			angle = Utils.NormalRelativeAngle(HeadingRadians - Math.Atan2(tar.X - X, tar.Y - Y));
+		//			SetTurnLeftRadians(angle);
+		//		}
+		//		else
+		//		{
+		//			distance = Math.Sqrt((tar.X - X) * (tar.X - X) + (tar.Y - Y) * (tar.Y - Y));
 
-                    DrawLineAndTarget(Color.Red, new Point2D(X, Y), new Point2D(tar.X, tar.Y));
+		//			DrawLineAndTarget(Color.Red, new Point2D(X, Y), new Point2D(tar.X, tar.Y));
 
-                    SetAhead(distance);
+		//			SetAhead(distance);
                    
-                }
+		//		}
 
-                Execute();
-            } while (!MathHelpers.IsCloseToZero(distance));
+		//		Execute();
+		//	} while (!MathHelpers.IsCloseToZero(distance));
 
-        }
+		//}
 
 
 

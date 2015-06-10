@@ -39,12 +39,12 @@ namespace PG4500_2015_Innlevering2
                 {
                     Location end = MapHelper.ConvertToColMap((int)Enemy.Position.X, (int)Enemy.Position.Y);
                     Location start = MapHelper.ConvertToColMap((int)X, (int)Y);
-                    path = MapHelper.AStarSearch2(start, end, this);
+                    path = MapHelper.AStarSearch(start, end, this);
                 }
 
-				if (path.Count != 0) // we have a path!
+				if (path.Count != 0)
 				{
-					for (int i = 0; i < path.Count;) // Go through all the locations in the list.
+					for (int i = 0; i < path.Count;)
 					{
 						nextNode = path[0];
 						target = new Location(nextNode.position.X, nextNode.position.Y);
@@ -52,8 +52,7 @@ namespace PG4500_2015_Innlevering2
 						target.X = (target.X * 50) + 25;
 						target.Y = 550 - (target.Y * 50) + 25;
 
-						// seek will return false when it has reached the target.
-						while (Seek(target, path))
+						while (Seek(target))
 						{
 							drawPath();
 							FindBot();
@@ -72,13 +71,13 @@ namespace PG4500_2015_Innlevering2
 			}
 		}
 
-		// Draw our robots path.
 		private void drawPath()
 		{
 			for (int i = 0; i < path.Count; i++)
 			{
 				Color halfTransparent = Color.FromArgb(128, Color.Blue);
 				// Draw rectangle at target.
+				//Graphics.FillRectangle(new SolidBrush(halfTransparent), (int)((50 * nextNode.position.X)), (int)(600 - (50 * (nextNode.position.Y+1))), 50, 50);
 				Graphics.FillRectangle(new SolidBrush(halfTransparent), (50 * path[i].position.X), 550 - (path[i].position.Y * 50), 50, 50);
 
 			}
@@ -95,7 +94,13 @@ namespace PG4500_2015_Innlevering2
 				Color.OrangeRed, //Bullet
 				Color.Red //Scan arc
 				);
-		    Seek(new Location(25, 25));
+			Location startPos = new Location(25, 25);
+			while (Seek(startPos))
+			{
+				FindBot();
+				Execute();
+			}
+
 		}
 
         public override void OnScannedRobot(ScannedRobotEvent scanData)
@@ -115,7 +120,7 @@ namespace PG4500_2015_Innlevering2
             return targetVector;
         }
 
-		// These three functions tries to find the bot with the radar.
+		// 
 		public void FindBot()
 		{
 			if (HasRadarLock)

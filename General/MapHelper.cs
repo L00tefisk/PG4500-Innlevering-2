@@ -32,7 +32,7 @@ namespace PG4500_2015_Innlevering2.General
 			new int[] {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 		};
 
-		static public List<Node> AStarSearch2(Location Start, Location End, Robocode.AdvancedRobotEx robot)
+		static public List<Node> AStarSearch(Location Start, Location End, Robocode.AdvancedRobotEx robot)
 		{
 			bool foundPath = false;
 			List<Node> path = new List<Node>();
